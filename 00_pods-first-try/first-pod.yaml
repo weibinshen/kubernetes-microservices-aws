@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod # make sure to use capital P for Pod
+metadata:
+  name: webapp # intentation in yaml must be spaces, not tabs.
+spec:
+  containers:
+  - name: webapp # dash means a list, as we can supply multiple containers in a pod.
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+
+# To create a pod, run $kubectl apply -f first-pod.yaml
+# To get basic info of that pod: $kubectl describe pod webapp
+# To execute a command (e.g. ls) on the pod: $kubectl exec webapp ls
+# To get a shell inside the pod: $kubectl -it exec webapp sh 
