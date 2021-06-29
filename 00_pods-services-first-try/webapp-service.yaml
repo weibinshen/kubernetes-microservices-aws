@@ -1,0 +1,29 @@
+# Services are long-lived entities in K8s, whereas Pods come and go.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-webapp
+
+spec:
+  # This defines which pods are going to be represented by this Service
+  # The service becomes a network endpoint for either other services
+  # or maybe external users to connect to (eg browser)
+  selector:
+    app: webapp
+    release: "0-5" # multiple labels has an AND relationship in a selector.
+
+  ports:
+    - name: http
+      port: 80 # another parameter is targertPort, which defines which port to forward to. By default targetPort = port if not specified.
+      
+      # We can only specify nodePort value when tye type is NodePort. 
+      # nodePort has to be greater than 30000 for K8s. This restriction is added to avoid port clashing with ports used internally to K8s
+      # In production this port will be replaced by a load balancer.
+      nodePort: 30080 
+
+  # Three possible values for type:
+  # ClusterIP: a service of type ClusterIP will only be accessible from internal of the K8s cluster.
+  # NodePort: expose a port through the node. 
+  # LoadBalancer: a load balancer
+  type: NodePort

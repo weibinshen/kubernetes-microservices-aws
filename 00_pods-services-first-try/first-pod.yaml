@@ -1,0 +1,36 @@
+apiVersion: v1
+# make sure to use capital P for Pod
+kind: Pod 
+metadata:
+# intentation in yaml must be spaces, not tabs.
+  name: webapp 
+  labels: 
+    app: webapp
+    release: "0"
+spec:
+  containers:
+  # dash means a list, as we can supply multiple containers in a pod.
+  - name: webapp 
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+
+# To create a pod, run $kubectl apply -f first-pod.yaml
+# To get basic info of that pod: $kubectl describe pod webapp
+# To execute a command (e.g. ls) on the pod: $kubectl exec webapp ls
+# To get a shell inside the pod: $kubectl -it exec webapp sh 
+
+# document separator. This comment cannot be added inline to the separator
+--- 
+
+# We create another deployment for the v0.5 of this app.
+# With this we can perform a simple upgrade with no downtime: Create the new pod first, and then re-configure the service to select the new pod by the new label.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: webapp-release-0-5
+  labels:
+    app: webapp
+    release: "0-5"
+spec:
+  containers:
+  - name: webapp
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
