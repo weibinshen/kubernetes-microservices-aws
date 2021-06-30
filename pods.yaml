@@ -1,11 +1,23 @@
 # In Yaml, spaces after colon is necessary.
-# Replicaset APIs are in apps, not core, so we need to say apps/v1.
+
+# Replicaset/Deployment APIs are in apps, not core, so we need to say apps/v1.
+
+# With a deployment, when we re-apply it, it is going to create a new replicaset, and the old replica set's replica count will be set to 0, ready for roll back.
+  # If the new deployment failed, the old deployment won't be brought down and will still be working.
+# To roll out or roll back, simply change the deployment definitions, and K8s will take care of it as we are defining a Deployment here
+  # To check status of deployment, use $kubectl rollout status deploy[ment] webapp
+  # To check roll out history, use $kubectl rollout history deploy[ment] webapp
+  # To rollback, simply run $kubectl rollout undo deploy[ment] webapp [--to-revision=<revision>]
+    # However the risk with the rollout undo is, now the yaml file isn't aligned with what's deployed, so this is only for being used in a real emergency.
+
 apiVersion: apps/v1 
-kind: ReplicaSet
+kind: Deployment
 metadata:
 # single pods will be named automatically by the replica set, so we do not need the name definition under "template"
   name: webapp 
 spec:
+  # minReadySeconds: the minimum duration that the new deployment needs to be up in order to be considered ready.
+  # minReadySeconds: 30
   selector:
     matchLabels:
     # This means, the replica set is only going to manage pods that hits this selector.
@@ -35,7 +47,7 @@ spec:
   - name: queue
     image: richardchesterwood/k8s-fleetman-queue:release1
 
-# Below are single pod definitions that we don't need anymore. We are using ReplicaSets instead
+# Below are single pod definitions that we don't need anymore. We are using ReplicaSets/Deployments instead
 
 # ---
 # apiVersion: v1
