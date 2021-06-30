@@ -3,15 +3,15 @@ apiVersion: v1
 kind: Pod 
 metadata:
 # intentation in yaml must be spaces, not tabs.
-  name: webapp 
+  name: webapp-release-0-5
   labels: 
     app: webapp
-    release: "0"
+    release: "0-5"
 spec:
   containers:
   # dash means a list, as we can supply multiple containers in a pod.
   - name: webapp 
-    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
 
 # To create a pod, run $kubectl apply -f first-pod.yaml
 # To get basic info of that pod: $kubectl describe pod webapp
@@ -26,11 +26,24 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: webapp-release-0-5
+  name: webapp-release-0
   labels:
     app: webapp
-    release: "0-5"
+    release: "0"
 spec:
   containers:
   - name: webapp
-    image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
+    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: queue
+  labels:
+    app: queue
+spec:
+  containers:
+  - name: queue
+    image: richardchesterwood/k8s-fleetman-queue:release1
