@@ -1,39 +1,26 @@
-apiVersion: v1
-# make sure to use capital P for Pod
-kind: Pod 
+# In Yaml, spaces after colon is necessary.
+# Replicaset APIs are in apps, not core, so we need to say apps/v1.
+apiVersion: apps/v1 
+kind: ReplicaSet
 metadata:
-# intentation in yaml must be spaces, not tabs.
-  name: webapp-release-0-5
-  labels: 
-    app: webapp
-    release: "0-5"
+# single pods will be named automatically by the replica set, so we do not need the name definition under "template"
+  name: webapp 
 spec:
-  containers:
-  # dash means a list, as we can supply multiple containers in a pod.
-  - name: webapp 
-    image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
-
-# To create a pod, run $kubectl apply -f first-pod.yaml
-# To get basic info of that pod: $kubectl describe pod webapp
-# To execute a command (e.g. ls) on the pod: $kubectl exec webapp ls
-# To get a shell inside the pod: $kubectl -it exec webapp sh 
-
-# document separator. This comment cannot be added inline to the separator
---- 
-
-# We create another deployment for the v0.5 of this app.
-# With this we can perform a simple upgrade with no downtime: Create the new pod first, and then re-configure the service to select the new pod by the new label.
-apiVersion: v1
-kind: Pod
-metadata:
-  name: webapp-release-0
-  labels:
-    app: webapp
-    release: "0"
-spec:
-  containers:
-  - name: webapp
-    image: richardchesterwood/k8s-fleetman-webapp-angular:release0
+  selector:
+    matchLabels:
+    # This means, the replica set is only going to manage pods that hits this selector.
+      app: webapp
+  replicas: 2
+  # template for the pods
+  template: 
+    metadata:
+    # Though we don't need a pod name here, the label is still necessary for the service to select the right pod.
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
 
 ---
 
@@ -47,3 +34,43 @@ spec:
   containers:
   - name: queue
     image: richardchesterwood/k8s-fleetman-queue:release1
+
+# Below are single pod definitions that we don't need anymore. We are using ReplicaSets instead
+
+# ---
+# apiVersion: v1
+# # make sure to use capital P for Pod
+# kind: Pod 
+# metadata:
+# # intentation in yaml must be spaces, not tabs.
+#   name: webapp-release-0-5
+#   labels: 
+#     app: webapp
+#     release: "0-5"
+# spec:
+#   containers:
+#   # dash means a list, as we can supply multiple containers in a pod.
+#   - name: webapp 
+#     image: richardchesterwood/k8s-fleetman-webapp-angular:release0-5
+
+# # To create a pod, run $kubectl apply -f first-pod.yaml
+# # To get basic info of that pod: $kubectl describe pod webapp
+# # To execute a command (e.g. ls) on the pod: $kubectl exec webapp ls
+# # To get a shell inside the pod: $kubectl -it exec webapp sh 
+
+# # document separator. This comment cannot be added inline to the separator
+# --- 
+
+# # We create another deployment for the v0.5 of this app.
+# # With this we can perform a simple upgrade with no downtime: Create the new pod first, and then re-configure the service to select the new pod by the new label.
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: webapp-release-0
+#   labels:
+#     app: webapp
+#     release: "0"
+# spec:
+#   containers:
+#   - name: webapp
+#     image: richardchesterwood/k8s-fleetman-webapp-angular:release0

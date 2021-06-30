@@ -11,7 +11,7 @@ spec:
   # or maybe external users to connect to (eg browser)
   selector:
     app: webapp
-    release: "0-5" # multiple labels has an AND relationship in a selector.
+    # release: "0-5" # multiple labels has an AND relationship in a selector.
 
   ports:
     - name: http
