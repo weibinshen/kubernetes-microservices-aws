@@ -40,7 +40,44 @@ spec:
 
   ports:
     - name: http
+    # For the admin console, exposed to outside of the cluster, through the nodePort
       port: 8161
       nodePort: 30010
+    - name: endpoint
+    # This is the port we send/receive messages to/from the queue. It will only be a internal port, not expose to outside of K8S cluster, so no "nodePort" defined
+      port: 61616
+
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-position-tracker
+
+spec:
+  selector:
+    app: position-tracker
+
+  ports:
+    - name: http
+      port: 8080
+
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-api-gateway
+
+spec:
+  selector:
+    app: api-gateway
+
+  ports:
+    - name: http
+      port: 8080
+      nodePort: 30020
 
   type: NodePort
