@@ -53,6 +53,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+# This will be the name used in the DNS as well as API, so make sure this name matches with the API definitions in the Springboot app.
   name: fleetman-position-tracker
 
 spec:

@@ -1,0 +1,42 @@
+# Here in this file we define the persistent volume claims that can be reused in many workloads.
+
+# PersistentVolumeClaim defines "What do we want?"
+apiVersion: v1
+# persistent volume claim points to a persistent volume which has the implementation details of persistence.
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+# This spec section is actually a request, in order to fulfill what is called a "binding"
+# It tells k8s to go and find 20GB of space in the persistence volume, whose className and accessModes matches with what's requested here.
+# This is a label to a type of storage, and should match with what's specified in PersistentVolume
+  storageClassName: mylocalstorage
+  # access modes field is required (see below)
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+
+# PersistentVolume defines "How do we want it implemented"
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage
+spec:
+  storageClassName: mylocalstorage
+  capacity:
+  # This is really important when deploiying to cloud, as it specifies how much spaces the cloud service provide offers to you.
+  # This should be no less then what you requested in PersistentVolumeClaim
+    storage: 20Gi
+  accessModes:
+  # access modes field is required for defining a persistent volume
+  # ReadWriteOnce, ReadOnlyMany, ReadWriteMany. They specify whether the persistence volume can be accessed by one node more many nodes.
+  # Majority of the cases we only want one persistence to be accessed by one node. 
+    - ReadWriteOnce
+  # Here we are actually using the hostPath: https://kubernetes.io/docs/concepts/storage/volumes/#hostpath 
+  hostPath:
+  # mnt directory is where a mounted external drive will show-up on linux.
+    path: "/mnt/some/directory/structure/"
+    type: DirectoryOrCreate

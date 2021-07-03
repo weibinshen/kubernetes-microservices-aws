@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: queue
-        image: richardchesterwood/k8s-fleetman-queue:release1
+        image: richardchesterwood/k8s-fleetman-queue:release2
 ---
 # Because this position-simulator is purely a message generator, we do not need to interact with it, so we don' need a k8s service for it.
 apiVersion: apps/v1
@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: position-simulator
-        image: richardchesterwood/k8s-fleetman-position-simulator:release1
+        image: richardchesterwood/k8s-fleetman-position-simulator:release2
         env:
         # env for "environmental variables", which are Application-specific configurations used by the spring boot application
         - name: SPRING_PROFILES_ACTIVE
@@ -57,7 +57,7 @@ spec:
     spec:
       containers:
       - name: position-tracker
-        image: richardchesterwood/k8s-fleetman-position-tracker:release1
+        image: richardchesterwood/k8s-fleetman-position-tracker:release3
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: production-microservice
@@ -78,7 +78,7 @@ spec:
     spec:
       containers:
       - name: api-gateway
-        image: richardchesterwood/k8s-fleetman-api-gateway:release1
+        image: richardchesterwood/k8s-fleetman-api-gateway:release2
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: production-microservice
@@ -100,7 +100,7 @@ spec:
     spec:
       containers:
       - name: webapp
-        image: richardchesterwood/k8s-fleetman-webapp-angular:release1
+        image: richardchesterwood/k8s-fleetman-webapp-angular:release2
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: production-microservice

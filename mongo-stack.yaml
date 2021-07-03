@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+      # For official images on docker hub, usually their names don't contain slash. This one is just called mongo, tag 3.6.5-jessie
+        image: mongo:3.6.5-jessie
+        volumeMounts:
+          - name: mongo-persistent-storage
+          # This is the directory inside the container. Mongo by default stores data at /data/db.
+          # This directory will be mapped to a directory on the hosting structure
+          # Locally the hosting structure is just the single machine hosting it. On AWS this hosting structure could be EBS.
+          # With this mapping we can really be sure that our data is persisted, that even the container of Mongo dies, our data is still persisted.
+            mountPath: /data/db
+      volumes:
+      # This name should match-up with containers[i].volumneMounts[j].name
+      # Explore all kinds of volumes that we can use here: https://kubernetes.io/docs/concepts/storage/volumes/
+      # Here we are actually using the hostPath: https://kubernetes.io/docs/concepts/storage/volumes/#hostpath 
+        - name: mongo-persistent-storage
+          # pointer to the configuration of HOW we want the mount to be implemented -> mongo-pvc
+          # This is so that if this persistent volume is used in many places and we want to move all of them to a new platform
+          # We can simply go to the claim and change it in one place.
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+---
+# In order for the above pod to be visible in the kube DNS system for service discovery, we need to define a service exposing that pod.
+kind: Service
+apiVersion: v1
+metadata:
+# This name will become the DNS entry so it has to match with the APIs in the Springboot application.
+  name: fleetman-mongodb
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - name: mongoport
+      port: 27017
+  type: ClusterIP
