@@ -20,13 +20,16 @@ spec:
       # We can only specify nodePort value when tye type is NodePort. 
       # nodePort has to be greater than 30000 for K8s. This restriction is added to avoid port clashing with ports used internally to K8s
       # In production this port will be replaced by a load balancer.
-      nodePort: 30080 
+      # nodePort: 30080 
 
   # Three possible values for type:
   # ClusterIP: a service of type ClusterIP will only be accessible from internal of the K8s cluster.
   # NodePort: expose a port through the node. 
   # LoadBalancer: a load balancer
-  type: NodePort
+  # type: NodePort
+
+  # This provisioned load balancer will evenly distribute the load across pods named webapp.
+  type: LoadBalancer
 
 ---
 apiVersion: v1
@@ -42,12 +45,13 @@ spec:
     - name: http
     # For the admin console, exposed to outside of the cluster, through the nodePort
       port: 8161
-      nodePort: 30010
+      # nodePort: 30010
     - name: endpoint
     # This is the port we send/receive messages to/from the queue. It will only be a internal port, not expose to outside of K8S cluster, so no "nodePort" defined
       port: 61616
 
-  type: NodePort
+  # type: NodePort
+  type: ClusterIP
 
 ---
 apiVersion: v1
@@ -79,6 +83,7 @@ spec:
   ports:
     - name: http
       port: 8080
-      nodePort: 30020
+      # nodePort: 30020
 
-  type: NodePort
+  # type: NodePort
+  type: ClusterIP
