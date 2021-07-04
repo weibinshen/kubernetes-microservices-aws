@@ -1,0 +1,31 @@
+# This storage-aws.yaml is for deployment to AWS.
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo-pvc
+spec:
+  storageClassName: cloud-ssd
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 7Gi
+
+---
+# apiVersion is complicated as it is a plugin
+apiVersion: storage.k8s.io/v1
+# Instead of a persistent volume as was used in local Minikube, here we define a StorageClass
+# A storageclass is a Kubernetes object that stores information about creating a persistent volume for your pod.
+kind: StorageClass
+metadata:
+  name: cloud-ssd
+# Provisioner needs to match with what's defind in the plugin.
+provisioner: kubernetes.io/aws-ebs
+parameters:
+# four possible values: io1, gp2, sc1, st1. These are defined by AWS.
+# gp2: regular SSD. io1: higher-end SSD. sc1 and st1 are disk harddrives.
+  type: gp2
+# We are not specifying zones here, so K8s will round-robin across all available zones where k8s has a node.
+# Also in this StorageClass we don't define how much space we need for the Persistent Volume, 
+# because that will be dynamically allocated based on what's specified in the PVC.
