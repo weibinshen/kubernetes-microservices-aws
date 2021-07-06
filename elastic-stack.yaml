@@ -4,6 +4,8 @@
 # A separate yaml configures Fluentd
 #
 
+# ELK stack is deployed to system namespace, to really see them, use $kubectl get po -n kube-system
+
 # ServiceAccount and ClusterRole sets up priviledges for Fluentd to access what it needs to access.
 apiVersion: v1
 kind: ServiceAccount
@@ -257,7 +259,7 @@ spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
         requests:
-        # We put 30 GB just to make it easily recognizable among all volumes we have :-D
+        # We put 31 GB just to make it easily recognizable among all volumes we have :-D
           storage: 31Gi
 ---
 
