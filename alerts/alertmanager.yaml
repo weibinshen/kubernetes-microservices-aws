@@ -1,0 +1,27 @@
+# This file is created based on instructions on https://prometheus.io/docs/prometheus/latest/configuration/configuration/ 
+# This file is meant to be read by the container of pod alertmanager-monitoring-kube-prometheus-alertmanager-0 
+# To inject this config file into the alert manager as a secret, which is like a file that is stored away in the k8s cluster:
+# 
+
+global:
+# Put the slack incoming webhook URL here. It contains a secretive hash so we need to keep it securely to avoid adverserial spamming into our channel.
+# Make sure to keep the single quote marks as the url should be represented as a string.
+  slack_api_url: '<webhook URL here>'
+route:
+  group_by: ['alertname']
+  group_wait: 5s
+  group_interval: 1m
+  # The message will repeat every 10 minutes as far as the alert is still in firing state.
+  repeat_interval: 10m
+  receiver: 'slack'
+
+receivers:
+- name: 'slack'
+  slack_configs:
+  # slack channel name is "alerts"
+  - channel: '#alerts'
+    icon_emoji: ':bell:'
+    # Send a message when the alert is rectified.
+    send_resolved: true
+    # Extracting information from prometheus and put them in the message content.
+    text: "<!channel> \nsummary: {{ .CommonAnnotations.summary }}\ndescription: {{ .CommonAnnotations.description }}\nmessage: {{ .CommonAnnotations.message }}"
