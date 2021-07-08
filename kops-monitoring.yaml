@@ -1,6 +1,20 @@
 # This yaml file is generated following these steps: https://github.com/prometheus-community/helm-charts 
 # Raw files are located under kops-kube-prometheus-stack directory
 
+# the crds yaml file needs to be applied first, and then this file.
+
+# services will show up in a separate namespace called monitoring.
+
+# monitoring-kube-prometheus-prometheus: the front-end of prometheus itself. prometheus is the backbone of the monitoring system which gathers all the data.
+# However this service is a clusterIP, so if we were to probe into it, we need to do temporary edits to the pod to make it acessible through loadBalancer
+#   kubectl edit svc monitoring-kube-prometheus-prometheus -n monitoring
+# Then we can access this svc through the LB but we need to make sure to use port 9090.
+# Same for if we want to change it into a NodePort with >30000 port, but we will lose the access if the pod died and gets restarted by k8s, and we have to manually update the security group to expose that port.
+# We can use the same editing trick to access monitoring-grafana, which is the svc for grafana. default username/password is admin/prom-operator
+
+# Interesting metrics:
+# node_load: CPU load of a node. Three window lengths (in minutes): node_load1, node_load5, node_load15.
+
 apiVersion: v1
 kind: Namespace
 metadata:

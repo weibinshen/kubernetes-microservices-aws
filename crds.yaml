@@ -1,6 +1,8 @@
 # This yaml file is generated following these steps: https://github.com/prometheus-community/helm-charts 
 # Raw files are located under kops-kube-prometheus-stack directory
 
+# this file needs to be applied first, and then the kops-monitoring yaml file.
+
 # https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/release-0.38/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml
 apiVersion: apiextensions.k8s.io/v1beta1
 # CustomResourceDefinition is a way to extend k8s to define custom types in the yaml.
