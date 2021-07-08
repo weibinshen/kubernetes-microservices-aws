@@ -1,0 +1,16 @@
+// Reveal all secrets currently existing
+kubectl get secret -n monitoring
+
+// Display the interested secret as yaml. There is a base64 encoded blob which is the alertmanager.yaml's content
+kubectl get secret -n monitoring alertmanager-monitoring-kube-prometheus-alertmanager -o yaml
+
+// Prove that by decoding the blob
+echo Z2xvYmFsOgogIHJlc29sdmVfdGltZW91dDogNW0KcmVjZWl2ZXJzOgotIG5hbWU6ICJudWxsIgpyb3V0ZToKICBncm91cF9ieToKICAtIGpvYgogIGdyb3VwX2ludGVydmFsOiA1bQogIGdyb3VwX3dhaXQ6IDMwcwogIHJlY2VpdmVyOiAibnVsbCIKICByZXBlYXRfaW50ZXJ2YWw6IDEyaAogIHJvdXRlczoKICAtIG1hdGNoOgogICAgICBhbGVydG5hbWU6IFdhdGNoZG9nCiAgICByZWNlaXZlcjogIm51bGwi | base64 -d
+
+// Delete the existing secret
+kubectl delete secret -n monitoring alertmanager-monitoring-kube-prometheus-alertmanager
+
+// Recreate the secret. The term "generic" mean we want to create the secret from a file.
+kubectl create secret generic --from-file=alertmanager.yaml -n monitoring alertmanager-monitoring-kube-prometheus-alertmanager
+
+// Now, the Watchdog should be firing in the "alert" slack channel, though we may need to wait up to 10 minutes as we have configured the repetition to be 10 minutes.
