@@ -1,3 +1,6 @@
+# This yaml file is generated following these steps: https://github.com/prometheus-community/helm-charts 
+# Raw files are located under kops-kube-prometheus-stack directory
+
 apiVersion: v1
 kind: Namespace
 metadata:
