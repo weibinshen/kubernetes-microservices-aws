@@ -4,7 +4,7 @@
 - **workloads.yaml**: Defining all `Deployments`.
 - **services.yaml**: Defining all `Services`.
 - **storage.yaml** and **storage-aws.yaml**: Defining `PersistentVolumeClaim`, `PersistentVolume` and `StorageClass` for minikube or AWS deployments respectively.
-- **mongo-stack**: Defining `Deployments` and `Services` for MongoDB.
+- **mongo-stack.yaml**: Defining `Deployments` and `Services` for MongoDB.
 
 ### Logging, Monitoring and Alerts
 - **Logging**: ElasticStack with Fluentd
